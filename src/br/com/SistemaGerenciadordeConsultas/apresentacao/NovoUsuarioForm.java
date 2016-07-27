@@ -7,6 +7,7 @@ package br.com.SistemaGerenciadordeConsultas.apresentacao;
 
 import br.com.SistemaGerenciadordeConsultas.entidade.Usuario;
 import br.com.SistemaGerenciadordeConsultas.excecao.CampoObrigatorioException;
+import br.com.SistemaGerenciadordeConsultas.excecao.GerenciadorConsultasException;
 import br.com.SistemaGerenciadordeConsultas.excecao.UsuarioExisteException;
 import br.com.SistemaGerenciadordeConsultas.negocio.UsuarioBO;
 import java.io.UnsupportedEncodingException;
@@ -38,7 +39,6 @@ public class NovoUsuarioForm extends javax.swing.JFrame {
         initComponents();
 
     }
-   
 
     NovoUsuarioForm(Usuario usuarioSelecionado, ListagemUsuarioForm listagemUsuarioForm) {
         usuarioEmEdicao = true;
@@ -57,7 +57,6 @@ public class NovoUsuarioForm extends javax.swing.JFrame {
         } else if (usuario.getGrupo_Usuario().equals("SECRETARIA")) {
             chbSecretaria.setSelected(true);
         }
-
     }
 
     /**
@@ -233,6 +232,7 @@ public class NovoUsuarioForm extends javax.swing.JFrame {
         String nome = txtNome.getText().trim();
         String login = txtLogin.getText().trim();
         String senha = txtSenha.getText().trim();
+
         String grupo = "";
         if (chbAdministrador.isSelected()) {
             grupo = "ADMINISTRADOR";
@@ -253,16 +253,28 @@ public class NovoUsuarioForm extends javax.swing.JFrame {
         try {
             UsuarioBO usuarioBO = new UsuarioBO();
             usuarioBO.salvar(usuario);
-            JOptionPane.showMessageDialog(this, "Usuário Cadastrado com Sucesso!", "Cadastro de Usuário!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Usuário cadastrado com sucesso!",
+                    "Cadastro de Usuário",
+                    JOptionPane.INFORMATION_MESSAGE);
             this.limparCamposTela();
             listagemUsuarioForm.carregarTabelaUsuario();
-        } catch (CampoObrigatorioException e) {
-            JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Cadastar Usuário!", "Cadastro de Usuário!", JOptionPane.ERROR_MESSAGE);
-        } catch (UsuarioExisteException e) {
-            JOptionPane.showMessageDialog(this, "Usuário já cadastrado com esse LOGIN!", "Cadastro de Usuário!", JOptionPane.ERROR_MESSAGE);
-            this.limparCamposTela();
-        } catch (SQLException ex) {
-            Logger.getLogger(NovoUsuarioForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GerenciadorConsultasException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Cadastro de Usuário",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } catch (Exception e) {
+            System.out.println("Erro inesperado! Informe a mensagem de erro ao administrador do sistema.");
+            e.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro inesperado! Informe o erro ao administrador do sistema",
+                    "Cadastro de Usuário",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
     }
@@ -277,7 +289,7 @@ public class NovoUsuarioForm extends javax.swing.JFrame {
         } else if (chbSecretaria.isSelected()) {
             grupo = "SECRETÁRIA";
         }
-        
+
         usuario.setNome(nome);
         usuario.setLogin(login);
         usuario.setGrupo_Usuario(grupo);
@@ -291,13 +303,28 @@ public class NovoUsuarioForm extends javax.swing.JFrame {
         try {
             UsuarioBO usuarioBO = new UsuarioBO();
             usuarioBO.editar(usuario);
-            JOptionPane.showMessageDialog(this, "Usuário Alterado com Sucesso!", "Alteração de Usuário!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Usuário alterado com sucesso!",
+                    "Alteração de Usuário",
+                    JOptionPane.INFORMATION_MESSAGE);
             this.limparCamposTela();
             listagemUsuarioForm.carregarTabelaUsuario();
-        } catch (CampoObrigatorioException e) {
-            JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Alterar Usuário!", "Alteração de Usuário!", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException ex) {
-            Logger.getLogger(NovoUsuarioForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GerenciadorConsultasException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Alteração de Usuário",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } catch (Exception e) {
+            System.out.println("Erro inesperado! Informe a mensagem de erro ao administrador do sistema.");
+            e.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro inesperado! Informe o erro ao administrador do sistema",
+                    "Alteraçao de Usuário",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
     }
@@ -308,7 +335,6 @@ public class NovoUsuarioForm extends javax.swing.JFrame {
         txtNome.setText("");
     }
 
-  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSalvar;

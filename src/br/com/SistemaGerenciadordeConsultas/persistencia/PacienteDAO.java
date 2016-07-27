@@ -24,6 +24,8 @@ public class PacienteDAO {
     private static final String SQL_BUSCA_TODOS = "SELECT * FROM PACIENTE ORDER BY NOME";
     private static final String SQL_BUSCA_TODOS_CPF = "SELECT * FROM PACIENTE WHERE CPF=? ORDER BY NOME";
     private static final String SQL_BUSCAR_CPF_EXISTE = "SELECT CPF FROM PACIENTE WHERE CPF = ?";
+    private static final String SQL_BUSCA_TODOS_NOME = "SELECT *FROM PACIENTE WHERE UPPER(nome) LIKE UPPER(?) ";
+    private static final String SQL_REMOVER_PACIENTE = "DELETE FROM PACIENTE WHERE ID = ?";
 
     public void criar(Paciente paciente) throws SQLException {
         PreparedStatement comando = null;
@@ -196,4 +198,74 @@ public class PacienteDAO {
         }
         return paciente;
     }
+
+    public List<Paciente> buscarNomes(String nome) throws SQLException {
+        List<Paciente> pacientes = new ArrayList<>();
+        Paciente paciente = null;
+        Connection conexao = null;
+        PreparedStatement comando = null;
+        ResultSet resultado = null;
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        try {
+            conexao = BancoDadosUtil.getConnection();
+            comando = conexao.prepareStatement(SQL_BUSCA_TODOS_NOME);
+            comando.setString(1, "%" + nome + "%");
+            resultado = comando.executeQuery();
+            while (resultado.next()) {
+                paciente = new Paciente();
+                paciente = new Paciente();
+
+                paciente.setId(resultado.getInt(1));
+                paciente.setNome(resultado.getString(2));
+                paciente.setCpf(resultado.getString(3));
+                paciente.setTelefone(resultado.getString(4));
+                paciente.setEndereco(resultado.getString(5));
+                paciente.setData_nascimento(resultado.getDate(6));
+                paciente.setSexo(resultado.getString(7));
+                pacientes.add(paciente);
+
+            }
+
+        } catch (Exception e) {
+            if (conexao != null) {
+//                conexao.rollback();
+            }
+//            throw new RuntimeException();
+        } finally {
+            if (comando != null && !comando.isClosed()) {
+                comando.close();
+            }
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+            }
+        }
+        return pacientes;
+
+    }
+
+    public void removerPaciente(int id) throws SQLException {
+        Connection conexao = null;
+        PreparedStatement comando = null;
+        try {
+
+            conexao = BancoDadosUtil.getConnection();
+
+            comando = conexao.prepareStatement(SQL_REMOVER_PACIENTE);
+
+            comando.setInt(1, id);
+
+            comando.execute();
+            conexao.commit();
+        } catch (Exception e) {
+            if (conexao != null) {
+                conexao.rollback();
+            }
+            throw e;
+        } finally {
+
+            BancoDadosUtil.fecharChamadasBancoDados(conexao, comando);
+        }
+
+    }
 }
+

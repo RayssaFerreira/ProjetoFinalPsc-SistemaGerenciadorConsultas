@@ -13,6 +13,8 @@ import br.com.SistemaGerenciadordeConsultas.excecao.GerenciadorConsultasExceptio
 import br.com.SistemaGerenciadordeConsultas.negocio.EspecialidadeBO;
 import br.com.SistemaGerenciadordeConsultas.negocio.MedicoBO;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +27,6 @@ import javax.swing.JOptionPane;
  */
 public class NovoMedicoForm extends javax.swing.JFrame {
 
-   
     private Medico medico;
     private boolean medicoEmEdicao;
     private ListagemMedicoForm listagemMedicoForm;
@@ -33,6 +34,7 @@ public class NovoMedicoForm extends javax.swing.JFrame {
     private List<Especialidade> especialidades;
 
     public NovoMedicoForm(ListagemMedicoForm listagemMedicoForm) throws SQLException {
+        especialidades = new ArrayList<>();
         medico = new Medico();
         this.listagemMedicoForm = listagemMedicoForm;
         initComponents();
@@ -40,15 +42,17 @@ public class NovoMedicoForm extends javax.swing.JFrame {
 
     }
 
-    NovoMedicoForm(Medico medicoSelecionado, ListagemMedicoForm listagemMedicoForm) {
+    NovoMedicoForm(Medico medicoSelecionado, ListagemMedicoForm listagemMedicoForm) throws SQLException {
         medicoEmEdicao = true;
         medico = medicoSelecionado;
+        especialidades = new ArrayList<>();
         this.listagemMedicoForm = listagemMedicoForm;
         initComponents();
+        carregarCmb();
         inicializarCamposTela();
     }
 
-    public void inicializarCamposTela() {
+    public void inicializarCamposTela() throws SQLException {
         this.txtNome.setText(this.medico.getNome());
         this.txtCpf.setText(this.medico.getCpf());
         this.txtCrm.setText(this.medico.getCrm());
@@ -59,14 +63,13 @@ public class NovoMedicoForm extends javax.swing.JFrame {
         } else if (medico.getSexo().equals("M")) {
             rdoM.setSelected(true);
         }
-         for(int i=0; i<especialidades.size(); i++){
-            Especialidade espcialidade = especialidades.get(i);
-            if(espcialidade.getNome().equals(espcialidade.getId())){
-                this.cmbEspecialidade.setSelectedIndex(i+1);
-                break;
-            }
+        EspecialidadeBO especialidadeBO = new EspecialidadeBO();
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cmbEspecialidade.getModel();
+        model.removeAllElements();
+        model.addElement(medico.getEspecialidade());
+        for (Especialidade especialidade : especialidadeBO.buscarTodos()) {
+            model.addElement(especialidade);
         }
-
     }
 
     /**
@@ -213,8 +216,7 @@ public class NovoMedicoForm extends javax.swing.JFrame {
                                 .addGap(0, 334, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnVoltar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnVoltar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(imagemMedico)
                 .addContainerGap())
@@ -288,15 +290,15 @@ public class NovoMedicoForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-         if (medicoEmEdicao == false) {
+        if (medicoEmEdicao == false) {
             salvarMedico();
         } else {
             editarMedico();
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
-    private void salvarMedico(){
-        try {
-           
+    private void salvarMedico() {
+        
+
             String nome = txtNome.getText().trim();
             String cpf = txtCpf.getText().trim();
             String crm = txtCrm.getText().trim();
@@ -320,22 +322,33 @@ public class NovoMedicoForm extends javax.swing.JFrame {
             try {
                 MedicoBO medicoBO = new MedicoBO();
                 medicoBO.salvar(medico);
-                JOptionPane.showMessageDialog(this, "Médico Cadastrado com Sucesso!", "Cadatro Médico!", JOptionPane.INFORMATION_MESSAGE);
+                 JOptionPane.showMessageDialog(this,
+                    "Médico cadastrado com sucesso!",
+                    "Cadastro de Médico",
+                    JOptionPane.INFORMATION_MESSAGE);
                 carregarCmb();
                 this.limparCamposTela();
                 listagemMedicoForm.carregarTabelaMedico();
-
-            } catch (GerenciadorConsultasException ex) {
-                JOptionPane.showMessageDialog(this, "Médico já cadastrado com esse CPF!", "Cadastro Médico!", JOptionPane.ERROR_MESSAGE);
-            } catch (SQLException ex) {
-                Logger.getLogger(NovoMedicoForm.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (CampoObrigatorioException ex) {
-            JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Cadastar Médico!", "Cadastro Médico!", JOptionPane.ERROR_MESSAGE);
+            }catch (GerenciadorConsultasException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Cadastro de Médico",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } catch (Exception e) {
+            System.out.println("Erro inesperado! Informe a mensagem de erro ao administrador do sistema.");
+            e.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro inesperado! Informe o erro ao administrador do sistema",
+                    "Cadastro de Médico",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
-        dispose();
     }
-    private void editarMedico(){
+
+    private void editarMedico() {
         try {
             String nome = txtNome.getText().trim();
             String cpf = txtCpf.getText().trim();
@@ -349,7 +362,7 @@ public class NovoMedicoForm extends javax.swing.JFrame {
             } else if (rdoM.isSelected()) {
                 sexo = "M";
             }
-            
+
             medico.setNome(nome);
             medico.setCpf(cpf);
             medico.setCrm(crm);
@@ -362,7 +375,6 @@ public class NovoMedicoForm extends javax.swing.JFrame {
                 medicoBO.editar(medico);
                 JOptionPane.showMessageDialog(this, "Médico Alterado com Sucesso!", "Alteração de Médico!", JOptionPane.INFORMATION_MESSAGE);
                 carregarCmb();
-                this.limparCamposTela();
                 listagemMedicoForm.carregarTabelaMedico();
 
             } catch (GerenciadorConsultasException ex) {
@@ -373,9 +385,9 @@ public class NovoMedicoForm extends javax.swing.JFrame {
         } catch (CampoObrigatorioException ex) {
             JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Cadastar Médico!", "Alteração de Médico!", JOptionPane.ERROR_MESSAGE);
         }
-       
 
     }
+
     public void limparCamposTela() {
         txtNome.setText("");
         txtCpf.setText("");
@@ -418,7 +430,6 @@ public class NovoMedicoForm extends javax.swing.JFrame {
         EspecialidadeBO especialidadeBO = new EspecialidadeBO();
         DefaultComboBoxModel model = (DefaultComboBoxModel) cmbEspecialidade.getModel();
         model.removeAllElements();
-        cmbEspecialidade.addItem("Selecione");
         for (Especialidade especialidade : especialidadeBO.buscarTodos()) {
             model.addElement(especialidade);
         }

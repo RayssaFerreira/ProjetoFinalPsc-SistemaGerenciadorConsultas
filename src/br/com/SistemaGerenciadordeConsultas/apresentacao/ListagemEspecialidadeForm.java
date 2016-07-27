@@ -42,6 +42,7 @@ public class ListagemEspecialidadeForm extends javax.swing.JFrame {
         this.listagemEspecialidadeForm = listagemEspecialidadeForm;
         initComponents();
         inicializarCamposTela();
+        carregarTabelaEspecialidade();
     }
 
     public void inicializarCamposTela() {
@@ -136,6 +137,7 @@ public class ListagemEspecialidadeForm extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblEspecialidade.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblEspecialidade);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/SistemaGerenciadordeConsultas/apresentacao/icones/1469139319_new-24.png"))); // NOI18N
@@ -218,16 +220,28 @@ public class ListagemEspecialidadeForm extends javax.swing.JFrame {
         try {
             EspecialidadeBO especialidadeBO = new EspecialidadeBO();
             especialidadeBO.salvar(especialidade);
-            JOptionPane.showMessageDialog(this, "Cadastro Realizado com Sucesso!", "Cadastro de Especialidade!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Especialidade cadastrada com sucesso!",
+                    "Cadastro de Especialidade",
+                    JOptionPane.INFORMATION_MESSAGE);
             txtNome.setText("");
             carregarTabelaEspecialidade();
-        } catch (CampoObrigatorioException e) {
-            JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Cadastar Especilidade!", "Cadastro de Especialidade!", JOptionPane.ERROR_MESSAGE);
         } catch (GerenciadorConsultasException e) {
-            JOptionPane.showMessageDialog(this, "Especialidade já cadastrada com esse nome!", "Cadastro de Especialidade!", JOptionPane.ERROR_MESSAGE);
-            txtNome.setText("");
-        } catch (SQLException ex) {
-            Logger.getLogger(ListagemEspecialidadeForm.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Cadastro de Especialidade",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } catch (Exception e) {
+            System.out.println("Erro inesperado! Informe a mensagem de erro ao administrador do sistema.");
+            e.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro inesperado! Informe o erro ao administrador do sistema",
+                    "Cadastro de Especialidade",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -237,16 +251,28 @@ public class ListagemEspecialidadeForm extends javax.swing.JFrame {
         try {
             EspecialidadeBO especialidadeBO = new EspecialidadeBO();
             especialidadeBO.editar(especialidade);
-            JOptionPane.showMessageDialog(this, "Especialidade Alterada com Sucesso!", "Cadastro de Especialidade!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Especialidade alterada com sucesso!",
+                    "Alterado de Especialidade",
+                    JOptionPane.INFORMATION_MESSAGE);
             txtNome.setText("");
             carregarTabelaEspecialidade();
-        } catch (CampoObrigatorioException e) {
-            JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Cadastar Especilidade!", "Cadastro de Especialidade!", JOptionPane.ERROR_MESSAGE);
         } catch (GerenciadorConsultasException e) {
-            JOptionPane.showMessageDialog(this, "Especialidade já cadastrada com esse nome!", "Cadastro de Especialidade!", JOptionPane.ERROR_MESSAGE);
-            txtNome.setText("");
-        } catch (SQLException ex) {
-            Logger.getLogger(ListagemEspecialidadeForm.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Alteração de Especialidade",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } catch (Exception e) {
+            System.out.println("Erro inesperado! Informe a mensagem de erro ao administrador do sistema.");
+            e.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro inesperado! Informe o erro ao administrador do sistema",
+                    "Alteração de Especialidade",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
@@ -262,50 +288,56 @@ public class ListagemEspecialidadeForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.excluirEspecialidade();
     }//GEN-LAST:event_jButton2ActionPerformed
-    private void excluirEspecialidade(){
+    private void excluirEspecialidade() {
         try {
             int linhaSelecionada = tblEspecialidade.getSelectedRow();
             if (linhaSelecionada != -1) {
                 Especialidade especialidadeSelecionada = especialidades.get(linhaSelecionada);
 
                 int resposta;
-                String mensagem = "Deseja excluir especialidade : " + especialidadeSelecionada.getNome()+"?";
+                String mensagem = "Deseja excluir especialidade : " + especialidadeSelecionada.getNome() + "?";
                 String titulo = "Exclusão de Consulta";
                 resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
 
                 if (resposta == JOptionPane.YES_NO_OPTION) {
                     EspecialidadeBO especialidadeBO = new EspecialidadeBO();
                     especialidadeBO.removerEspecialidade(especialidadeSelecionada.getId());
-                    JOptionPane.showMessageDialog(this, "Especialidade Excluida com sucesso!", "Exclusão de Especialidade", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                            "Especialidade Excluida com sucesso!",
+                            "Exclusão de Especialidade",
+                            JOptionPane.INFORMATION_MESSAGE);
                     this.carregarTabelaEspecialidade();
                 }
 
             } else {
                 String mensagem = "Nenhuma especialidae selecionada.";
-                JOptionPane.showMessageDialog(this, mensagem, "Exclusão de Especialidade", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Exclusão de Especialidade",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
             mensagem += "\nMensagem de erro:\n" + e.getMessage();
-            JOptionPane.showMessageDialog(this, mensagem, "Exclusão de Especialidade ", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Exclusão de Especialidade ",
+                    JOptionPane.ERROR_MESSAGE);
             this.dispose();
 
         }
     }
+
     private void AlterarEspecialidade() {
 
         try {
             int linhaSelecionada = tblEspecialidade.getSelectedRow();
             if (linhaSelecionada != -1) {
                 Especialidade especialidadeSelecionada = especialidades.get(linhaSelecionada);
-
                 int resposta;
                 String mensagem = "Deseja alterar Especialidade? " + especialidadeSelecionada.getNome();
                 String titulo = "Alteração de Especialidade";
                 resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
-
                 if (resposta == JOptionPane.YES_NO_OPTION) {
-                     ListagemEspecialidadeForm cadastroEspecialidade = new ListagemEspecialidadeForm(especialidadeSelecionada, this);
+                    ListagemEspecialidadeForm cadastroEspecialidade = new ListagemEspecialidadeForm(especialidadeSelecionada, this);
                     cadastroEspecialidade.setVisible(true);
                     dispose();
                 }

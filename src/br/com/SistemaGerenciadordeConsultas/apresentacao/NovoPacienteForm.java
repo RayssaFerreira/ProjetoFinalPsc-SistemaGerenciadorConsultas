@@ -8,6 +8,7 @@ package br.com.SistemaGerenciadordeConsultas.apresentacao;
 import br.com.SistemaGerenciadordeConsultas.entidade.Paciente;
 import br.com.SistemaGerenciadordeConsultas.excecao.CampoObrigatorioException;
 import br.com.SistemaGerenciadordeConsultas.excecao.CpfPacienteExisteException;
+import br.com.SistemaGerenciadordeConsultas.excecao.GerenciadorConsultasException;
 import br.com.SistemaGerenciadordeConsultas.negocio.ConverteData;
 import br.com.SistemaGerenciadordeConsultas.negocio.PacienteBO;
 import java.sql.SQLException;
@@ -48,8 +49,8 @@ public class NovoPacienteForm extends javax.swing.JFrame {
     public void inicializarCamposTela() {
         this.txtNome.setText(this.paciente.getNome());
         this.txtCpf.setText(this.paciente.getCpf());
-        SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");        
-        this.txtNascimento.setText(formatador.format(this.paciente.getData_nascimento()));      
+        SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
+        this.txtNascimento.setText(formatador.format(this.paciente.getData_nascimento()));
         this.txtEndereco.setText(this.paciente.getEndereco());
         this.txtTelefone.setText(this.paciente.getTelefone());
         if (paciente.getSexo().equals("F")) {
@@ -238,7 +239,7 @@ public class NovoPacienteForm extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(845, 395));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-     
+
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         if (pacienteEmEdicao == false) {
             salvarPaciente();
@@ -247,79 +248,107 @@ public class NovoPacienteForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
     private void salvarPaciente() {
-        try {
-            String nome = txtNome.getText().trim();
-            String cpf = txtCpf.getText().trim();
-            String telefone = txtTelefone.getText().trim();
-            String endereco = txtEndereco.getText().trim();
-            String nascimento = txtNascimento.getText().trim();
-            String sexo = "";
-            if (rdoF.isSelected()) {
-                sexo = "F";
-            } else if (rdoM.isSelected()) {
-                sexo = "M";
-            }
-            Paciente paciente = new Paciente();
-            paciente.setNome(nome);
-            paciente.setCpf(cpf);
-            paciente.setTelefone(telefone);
-            paciente.setEndereco(endereco);
-            paciente.setSexo(sexo);
-            try {
-                paciente.setData_nascimento(ConverteData.StringForDate(nascimento));
-                PacienteBO pacienteBO = new PacienteBO();
-                pacienteBO.salvar(paciente);
-                JOptionPane.showMessageDialog(this, "Paciente Cadastrado com Sucesso!", "Cadastro de Paciente!", JOptionPane.INFORMATION_MESSAGE);
-                this.limparCamposTela();
-                listagemPacienteForm.carregarTabelaPaciente();
-            } catch (ParseException e) {
-                JOptionPane.showMessageDialog(this, "Data de Nascimento Inválida!", "Cadastro de Paciente!", JOptionPane.ERROR_MESSAGE);
-            } catch (CpfPacienteExisteException e) {
-                JOptionPane.showMessageDialog(this, "\"Paciente já cadatrado com esse CPF!\"", "Cadastro de Paciente!", JOptionPane.ERROR_MESSAGE);
 
-            } catch (SQLException ex) {
-                Logger.getLogger(NovoPacienteForm.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (CampoObrigatorioException ex) {
-            JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Cadastar Paciente!", "Cadastro de Paciente!", JOptionPane.ERROR_MESSAGE);
+        String nome = txtNome.getText().trim();
+        String cpf = txtCpf.getText().trim();
+        String telefone = txtTelefone.getText().trim();
+        String endereco = txtEndereco.getText().trim();
+        String nascimento = txtNascimento.getText().trim();
+        String sexo = "";
+        if (rdoF.isSelected()) {
+            sexo = "F";
+        } else if (rdoM.isSelected()) {
+            sexo = "M";
+        }
+        Paciente paciente = new Paciente();
+        paciente.setNome(nome);
+        paciente.setCpf(cpf);
+        paciente.setTelefone(telefone);
+        paciente.setEndereco(endereco);
+        paciente.setSexo(sexo);
+        try {
+            paciente.setData_nascimento(ConverteData.StringForDate(nascimento));
+            PacienteBO pacienteBO = new PacienteBO();
+            pacienteBO.salvar(paciente);
+            JOptionPane.showMessageDialog(this,
+                    "Paciente cadastrado com sucesso!",
+                    "Cadastro de Paciente",
+                    JOptionPane.INFORMATION_MESSAGE);
+            this.limparCamposTela();
+            listagemPacienteForm.carregarTabelaPaciente();
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Data de Nascimento Inválida!",
+                    "Cadastro de Paciente!",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (GerenciadorConsultasException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Cadastro de Paciente",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } catch (Exception e) {
+            System.out.println("Erro inesperado! Informe a mensagem de erro ao administrador do sistema.");
+            e.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro inesperado! Informe o erro ao administrador do sistema",
+                    "Cadastro de Paciente",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
-    private void editarPaciente(){
-        try {
-            
-            String nome = txtNome.getText().trim();
-            String cpf = txtCpf.getText().trim();
-            String telefone = txtTelefone.getText().trim();
-            String endereco = txtEndereco.getText().trim();
-            String nascimento = txtNascimento.getText().trim();
-            String sexo = "";
-            if (rdoF.isSelected()) {
-                sexo = "F";
-            } else if (rdoM.isSelected()) {
-                sexo = "M";
-            }
-            paciente.setNome(nome);
-            paciente.setCpf(cpf);
-            paciente.setTelefone(telefone);
-            paciente.setEndereco(endereco);
-            paciente.setSexo(sexo);
-            try {
-                paciente.setData_nascimento(ConverteData.StringForDate(nascimento));
-                PacienteBO pacienteBO = new PacienteBO();
-                pacienteBO.editar(paciente);
-                JOptionPane.showMessageDialog(this, "Paciente Alterado com Sucesso!", "Alteração de Paciente!", JOptionPane.INFORMATION_MESSAGE);
-                this.limparCamposTela();
-                listagemPacienteForm.carregarTabelaPaciente();
-            } catch (ParseException e) {
-                JOptionPane.showMessageDialog(this, "Data de Nascimento Inválida!", "Alteração de Paciente!", JOptionPane.ERROR_MESSAGE);
-            } catch (CpfPacienteExisteException e) {
-                JOptionPane.showMessageDialog(this, "\"Paciente já cadatrado com esse CPF!\"", "Alteração Paciente!", JOptionPane.ERROR_MESSAGE);
 
-            } catch (SQLException ex) {
-                Logger.getLogger(NovoPacienteForm.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (CampoObrigatorioException ex) {
-            JOptionPane.showMessageDialog(this, "Preencha Todos os Campos para Alterar Paciente!", "Alteração Paciente!", JOptionPane.ERROR_MESSAGE);
+    private void editarPaciente() {
+
+        String nome = txtNome.getText().trim();
+        String cpf = txtCpf.getText().trim();
+        String telefone = txtTelefone.getText().trim();
+        String endereco = txtEndereco.getText().trim();
+        String nascimento = txtNascimento.getText().trim();
+        String sexo = "";
+        if (rdoF.isSelected()) {
+            sexo = "F";
+        } else if (rdoM.isSelected()) {
+            sexo = "M";
+        }
+        paciente.setNome(nome);
+        paciente.setCpf(cpf);
+        paciente.setTelefone(telefone);
+        paciente.setEndereco(endereco);
+        paciente.setSexo(sexo);
+        try {
+            paciente.setData_nascimento(ConverteData.StringForDate(nascimento));
+            PacienteBO pacienteBO = new PacienteBO();
+            pacienteBO.editar(paciente);
+            JOptionPane.showMessageDialog(this,
+                    "Paciente alterado com sucesso!",
+                    "Alteração de Paciente",
+                    JOptionPane.INFORMATION_MESSAGE);
+            this.limparCamposTela();
+            listagemPacienteForm.carregarTabelaPaciente();
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Data de Nascimento Inválida!",
+                    "Alteração de Paciente!",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (GerenciadorConsultasException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Alteração de Paciente",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } catch (Exception e) {
+            System.out.println("Erro inesperado! Informe a mensagem de erro ao administrador do sistema.");
+            e.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro inesperado! Informe o erro ao administrador do sistema",
+                    "Alteração de Paciente",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 

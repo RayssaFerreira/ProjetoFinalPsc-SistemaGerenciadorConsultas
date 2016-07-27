@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,8 @@ public class ConsultaDAO {
     private static final String SQL_BUSCA_TODOS = "SELECT * FROM CONSULTA ORDER BY DATA,HORARIO DESC";
     private static final String SQL_BUSCA_CONSULTA_GROUP_DIA = "SELECT COUNT(*), DATA FROM CONSULTA GROUP BY DATA ORDER BY DATA DESC";
     private static final String SQL_REMOVER_CONSULTA = "DELETE FROM CONSULTA WHERE ID = ?";
+    private static final String SQL_BUSCAR_CONSULTA = "SELECT DATA, HORARIO FROM CONSULTA WHERE DATA = ?";
+    
 
     public void criar(Consulta consulta) throws SQLException {
         PreparedStatement comando = null;
@@ -277,4 +280,40 @@ public class ConsultaDAO {
         }
         return consultas;
     }
+
+    public Consulta buscarConsultaMarcada(String data, Time horario) throws SQLException {
+       Consulta consulta = null;
+        Connection conexao = null;
+        PreparedStatement comando = null;
+        ResultSet resultado = null;
+        try {
+            conexao = BancoDadosUtil.getConnection();
+            comando = conexao.prepareStatement(SQL_BUSCAR_CONSULTA);
+            comando.setString(1, data);
+            comando.setTime(2, horario);
+            resultado = comando.executeQuery();
+
+            while (resultado.next()) {
+                consulta = new Consulta();
+
+                consulta.setData(resultado.getDate(1));
+                consulta.setHorario(resultado.getTime(2));
+            }
+
+        } catch (Exception e) {
+            if (conexao != null) {
+                conexao.rollback();
+            }
+            throw new RuntimeException();
+        } finally {
+            if (comando != null && !comando.isClosed()) {
+                comando.close();
+            }
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+            }
+        }
+        return consulta;
+    }
+
 }

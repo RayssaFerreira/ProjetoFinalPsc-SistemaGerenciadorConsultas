@@ -64,6 +64,7 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
         cmbEspecialidade = new javax.swing.JComboBox();
         btnBuscar = new javax.swing.JButton();
         btnLimpar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -141,6 +142,14 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/SistemaGerenciadordeConsultas/apresentacao/icones/1469138687_block_user.png"))); // NOI18N
+        jButton1.setText("Excluir");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -155,6 +164,8 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
                                 .addComponent(btnNovoNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAlterar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -179,10 +190,12 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNovoNovo)
                     .addComponent(btnAlterar)
-                    .addComponent(btnVoltar))
+                    .addComponent(btnVoltar)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCpf)
@@ -193,9 +206,9 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
                     .addComponent(cmbEspecialidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscar)
                     .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -265,6 +278,47 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAlterarActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.excluirMedico();
+    }//GEN-LAST:event_jButton1ActionPerformed
+    private void excluirMedico(){
+          try {
+            int linhaSelecionada = tblMedico.getSelectedRow();
+            if (linhaSelecionada != -1) {
+                Medico medicoSelecionado = medicos.get(linhaSelecionada);
+
+                int resposta;
+                String mensagem = "Deseja excluir médico : " + medicoSelecionado.getNome()+ "?";
+                String titulo = "Exclusão de Médico";
+                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+
+                if (resposta == JOptionPane.YES_NO_OPTION) {
+                    MedicoBO medicoBO = new MedicoBO();
+                    medicoBO.removerMedico(medicoSelecionado.getId());
+                    JOptionPane.showMessageDialog(this,
+                            "Médico Excluido com sucesso!", 
+                            "Exclusão de Médico", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                    this.carregarTabelaMedico();
+                }
+
+            } else {
+                String mensagem = "Nenhum Médico selecionado para Excluir.";
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Exclusão de Médico",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
+            mensagem += "\nMensagem de erro:\n" + e.getMessage();
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Exclusão de Médico ",
+                    JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+
+        }
+    }
     private void editarMedico() throws SQLException {
          try {
             int linhaSelecionada = tblMedico.getSelectedRow();
@@ -274,7 +328,8 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
                 int resposta;
                 String mensagem = "Deseja alterar Médico? " + medicoSelecionado.getNome();
                 String titulo = "Alteração de Médico";
-                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+                resposta = JOptionPane.showConfirmDialog(this,
+                        mensagem, titulo, JOptionPane.YES_NO_OPTION);
 
                 if (resposta == JOptionPane.YES_NO_OPTION) {
                     NovoMedicoForm cadastroMedico = new NovoMedicoForm(medicoSelecionado,this);
@@ -282,15 +337,18 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
                 }
             } else {
                 String mensagem = "Nenhum médico selecionado para Alterar.";
-                JOptionPane.showMessageDialog(this, mensagem, "Alteração de Médico", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Alteração de Médico",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
             mensagem += "\nMensagem de erro:\n" + e.getMessage();
             e.printStackTrace(System.err);
-            JOptionPane.showMessageDialog(this, mensagem, "Alteração de Médico ", JOptionPane.ERROR_MESSAGE);
-             
-            //this.dispose();
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Alteração de Médico ",
+                    JOptionPane.ERROR_MESSAGE);
+          
         }
 
     }
@@ -302,6 +360,7 @@ public class ListagemMedicoForm extends javax.swing.JFrame {
     private javax.swing.JButton btnNovoNovo;
     private javax.swing.JButton btnVoltar;
     private javax.swing.JComboBox cmbEspecialidade;
+    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

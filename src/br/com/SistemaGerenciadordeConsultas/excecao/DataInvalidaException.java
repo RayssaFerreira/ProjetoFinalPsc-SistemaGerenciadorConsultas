@@ -11,8 +11,8 @@ package br.com.SistemaGerenciadordeConsultas.excecao;
  */
 public class DataInvalidaException extends GerenciadorConsultasException{
 
-    public DataInvalidaException(String mensagem) {
-        super(mensagem);
+    public DataInvalidaException() {
+        super("Data inválida para Agendar Consulta! A data está no Passado");
     }
     
 }

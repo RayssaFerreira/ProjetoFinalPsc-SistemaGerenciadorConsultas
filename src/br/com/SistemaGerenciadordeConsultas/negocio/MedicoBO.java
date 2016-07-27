@@ -52,6 +52,7 @@ public class MedicoBO {
         }
 
     }
+
     private void verificaCrmMedico(Medico medico) throws SQLException {
         Medico cpfMedicoExistente = null;
         MedicoDAO medicoDAO = new MedicoDAO();
@@ -64,11 +65,18 @@ public class MedicoBO {
 
     public void editar(Medico medico) throws SQLException, CampoObrigatorioException {
         MedicoDAO medicoDAO = new MedicoDAO();
-         if (medico.getNome().isEmpty() || medico.getCpf().length() == 9 || medico.getCrm().length() == 1 || medico.getTelefone().length() == 9
+        if (medico.getNome().isEmpty() || medico.getCpf().length() == 9 || medico.getCrm().length() == 1 || medico.getTelefone().length() == 9
                 || medico.getEndereco().isEmpty() || medico.getSexo().isEmpty()) {
             throw new CampoObrigatorioException();
         }
+        this.verificaCpfMedico(medico);
+        this.verificaCrmMedico(medico);
         medicoDAO.alterar(medico);
+    }
+
+    public void removerMedico(int id) throws Exception {
+    MedicoDAO medicoDAO = new MedicoDAO();
+        medicoDAO.removerMedico(id);    
     }
 
 }

@@ -190,7 +190,8 @@ public class ListagemUsuarioForm extends javax.swing.JFrame {
                 int resposta;
                 String mensagem = "Deseja alterar Usuário? " + usuarioSelecionado.getLogin();
                 String titulo = "Alteração de Usuário";
-                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+                resposta = JOptionPane.showConfirmDialog(this,
+                        mensagem, titulo, JOptionPane.YES_NO_OPTION);
 
                 if (resposta == JOptionPane.YES_NO_OPTION) {
                     NovoUsuarioForm cadastroUsuario = new NovoUsuarioForm(usuarioSelecionado,this);
@@ -198,12 +199,16 @@ public class ListagemUsuarioForm extends javax.swing.JFrame {
                 }
             } else {
                 String mensagem = "Nenhum usuário selecionado para Alterar.";
-                JOptionPane.showMessageDialog(this, mensagem, "Alteração de Usuário", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Alteração de Usuário",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
             mensagem += "\nMensagem de erro:\n" + e.getMessage();
-            JOptionPane.showMessageDialog(this, mensagem, "Alteração de Usuário ", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Alteração de Usuário ",
+                    JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
 
@@ -280,24 +285,32 @@ public class ListagemUsuarioForm extends javax.swing.JFrame {
                 int resposta;
                 String mensagem = "Deseja excluir usuário? " + usuarioSelecionado.getLogin();
                 String titulo = "Exclusão de Usuário";
-                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+                resposta = JOptionPane.showConfirmDialog(this,
+                        mensagem, titulo, JOptionPane.YES_NO_OPTION);
 
                 if (resposta == JOptionPane.YES_NO_OPTION) {
                     UsuarioBO usuarioBO = new UsuarioBO();
                     usuarioBO.removerUsuario(usuarioSelecionado.getId());
                     mensagem = "Usuário" + usuarioSelecionado.getLogin() + " Apagado com sucesso!";
-                    JOptionPane.showMessageDialog(this, "Usuário Excluido com sucesso!", "Exclusão de Usuário", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                            "Usuário Excluido com sucesso!",
+                            "Exclusão de Usuário",
+                            JOptionPane.INFORMATION_MESSAGE);
                     this.carregarTabelaUsuario();
                 }
 
             } else {
-                String mensagem = "Nenhum usuário selecionado.";
-                JOptionPane.showMessageDialog(this, mensagem, "Exclusão de usuário", JOptionPane.ERROR_MESSAGE);
+                String mensagem = "Nenhum usuário selecionado para Excluir.";
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Exclusão de usuário",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
             mensagem += "\nMensagem de erro:\n" + e.getMessage();
-            JOptionPane.showMessageDialog(this, mensagem, "Exclusão de Usuário ", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Exclusão de Usuário ",
+                    JOptionPane.ERROR_MESSAGE);
             this.dispose();
 
         }

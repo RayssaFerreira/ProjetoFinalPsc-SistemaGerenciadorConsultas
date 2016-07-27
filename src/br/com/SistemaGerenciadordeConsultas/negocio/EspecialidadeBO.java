@@ -39,6 +39,9 @@ public class EspecialidadeBO {
         if (especialidade.getNome().isEmpty()) {
             throw new CampoObrigatorioException();
         }
+        if (!especialidadeDAO.validar(especialidade)) {
+            throw new EspecialidadeCadastradaException();
+        }
         especialidadeDAO.alterar(especialidade);
     }
 

@@ -26,6 +26,7 @@ public class MedicoDAO {
     private static final String SQL_BUSCA_TODOS_FILTRO = "SELECT * FROM MEDICO WHERE NOME LIKE ? OR CPF LIKE ? ORDER BY NOME";
     private static final String SQL_BUSCAR_CPF_EXISTE = "SELECT CPF FROM MEDICO WHERE CPF = ?";
     private static final String SQL_BUSCAR_CRM_EXISTE = "SELECT CRM FROM MEDICO WHERE CRM = ?";
+    private static final String SQL_REMOVER_MEDICO = "DELETE FROM MEDICO WHERE ID = ?";
 
     public void criar(Medico medico) throws SQLException {
         PreparedStatement comando = null;
@@ -137,9 +138,7 @@ public class MedicoDAO {
         } catch (Exception e) {
             e.printStackTrace();
             if (conexao != null) {
-//                conexao.rollback();
             }
-//            throw new RuntimeException();
         } finally {
             if (comando != null && !comando.isClosed()) {
                 comando.close();
@@ -182,9 +181,7 @@ public class MedicoDAO {
 
         } catch (Exception e) {
             if (conexao != null) {
-//                conexao.rollback();
             }
-//            throw new RuntimeException();
         } finally {
             if (comando != null && !comando.isClosed()) {
                 comando.close();
@@ -260,5 +257,30 @@ public class MedicoDAO {
             }
         }
         return medico;
+    }
+
+    public void removerMedico(int id) throws Exception {
+        Connection conexao = null;
+        PreparedStatement comando = null;
+        try {
+
+            conexao = BancoDadosUtil.getConnection();
+
+            comando = conexao.prepareStatement(SQL_REMOVER_MEDICO);
+
+            comando.setInt(1, id);
+
+            comando.execute();
+            conexao.commit();
+        } catch (Exception e) {
+            if (conexao != null) {
+                conexao.rollback();
+            }
+            throw e;
+        } finally {
+
+            BancoDadosUtil.fecharChamadasBancoDados(conexao, comando);
+        }
+
     }
 }

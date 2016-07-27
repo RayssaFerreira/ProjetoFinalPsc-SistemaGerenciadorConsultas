@@ -12,7 +12,7 @@ package br.com.SistemaGerenciadordeConsultas.excecao;
 public class CpfMedicoExisteException extends GerenciadorConsultasException{
 
     public CpfMedicoExisteException() {
-         super("");
+         super("Médico já cadastrado com esse CPF!");
     }
 
     

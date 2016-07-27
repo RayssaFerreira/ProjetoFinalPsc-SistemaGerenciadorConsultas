@@ -49,17 +49,6 @@ public class NovaConsultaForm extends javax.swing.JFrame {
         carregarCmbPaciente();
     }
 
-    /* public NovaConsultaForm(ListagemConsultasForm listagemConsultasForm) {
-     consulta = new Consulta();
-     this.listagemConsultasForm = listagemConsultasForm;
-     initComponents();
-     try {
-     carregarCmbMedico();
-     carregarCmbPaciente();
-     } catch (SQLException e) {
-     e.printStackTrace();
-     }
-     }*/
     NovaConsultaForm(Consulta consultaSelecionada, ListagemConsultasForm listagemConsultasForm) {
         consultaEmEdicao = true;
         consulta = consultaSelecionada;
@@ -284,33 +273,9 @@ public class NovaConsultaForm extends javax.swing.JFrame {
         String observacao = txtObservacao.getText().trim();
 
         if (data.isEmpty() || horario.isEmpty() || observacao.isEmpty()) {
-            throw new CampoObrigatorioException("Preencha Todos os Campos para Agendar Consulta!");
+            throw new CampoObrigatorioException();
         }
     }
-
-    private void validaData(String data) throws ParseException {
-        Date dataAtual = new Date(System.currentTimeMillis());
-        Date dataInformada = ConverteData.StringForDate(data);
-
-        Date dataAtualZera = zeraHoras1(dataAtual);
-
-        if (dataInformada.before(dataAtualZera)) {
-            throw new DataInvalidaException("Data inválida");
-        }
-
-    }
-
-    private static Date zeraHoras1(Date data) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(data);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return (Date) cal.getTime();
-
-    }
-
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         if (consultaEmEdicao == false) {
             salvarConsulta();
@@ -329,27 +294,34 @@ public class NovaConsultaForm extends javax.swing.JFrame {
             consulta.setMedico((Medico) cmbMedico.getSelectedItem());
             consulta.setPaciente((Paciente) cmbPaciente.getSelectedItem());
             consulta.setObservacao(observacao);
-            this.validaData(data);
             try {
                 consulta.setData(ConverteData.StringForDate(data));
                 consulta.setHorario(ConverteData.StringForTime(horario));
                 ConsultaBO consultaBO = new ConsultaBO();
                 consultaBO.salvar(consulta);
-                JOptionPane.showMessageDialog(this, "Consulta Agendada Sucesso!", "Agendamento de Consultas!", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Consulta agendada com sucesso!",
+                        "Agendamento de Consultas",
+                        JOptionPane.INFORMATION_MESSAGE);
                 this.limparCamposTela();
                 carregarCmbMedico();
                 carregarCmbPaciente();
             } catch (ParseException e) {
-                JOptionPane.showMessageDialog(this, "Data ou Horário Inválida!", "Agendamento de Consultas!", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Data ou Horário Inválida!", "Agendamento de Consultas!",
+                        JOptionPane.ERROR_MESSAGE
+                );
             } catch (SQLException ex) {
                 Logger.getLogger(NovaConsultaForm.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (CampoObrigatorioException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         } catch (GerenciadorConsultasException e) {
-            JOptionPane.showMessageDialog(this, "Data Inválida!", "Agendamento de Consultas!", JOptionPane.ERROR_MESSAGE);
-        } catch (ParseException ex) {
-            Logger.getLogger(NovaConsultaForm.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Agendamento de Consultas",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -357,34 +329,40 @@ public class NovaConsultaForm extends javax.swing.JFrame {
         try {
             this.validaCampos();
 
-            //Recupera Campos Tela
             String data = txtData.getText().trim();
             String horario = txtHorario.getText().trim();
             String observacao = txtObservacao.getText().trim();
             consulta.setMedico((Medico) cmbMedico.getSelectedItem());
             consulta.setPaciente((Paciente) cmbPaciente.getSelectedItem());
             consulta.setObservacao(observacao);
-            this.validaData(data);
             try {
                 consulta.setData(ConverteData.StringForDate(data));
                 consulta.setHorario(ConverteData.StringForTime(horario));
                 ConsultaBO consultaBO = new ConsultaBO();
                 consultaBO.editar(consulta);
-                JOptionPane.showMessageDialog(this, "Consulta Alterada com Sucesso!", "Alteração de Consulta!", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Consulta alterada com sucesso!",
+                        "Alteração de Consultas",
+                        JOptionPane.INFORMATION_MESSAGE);
                 this.limparCamposTela();
                 carregarCmbMedico();
                 carregarCmbPaciente();
             } catch (ParseException e) {
-                JOptionPane.showMessageDialog(this, "Data ou Horário Inválida!", "Alteração de Consultas!", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Data ou Horário Inválida!", "Alteração de Consultas!",
+                        JOptionPane.ERROR_MESSAGE
+                );
             } catch (SQLException ex) {
                 Logger.getLogger(NovaConsultaForm.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (CampoObrigatorioException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         } catch (GerenciadorConsultasException e) {
-            JOptionPane.showMessageDialog(this, "Data Inválida!", "Alteração de Consultas!", JOptionPane.ERROR_MESSAGE);
-        } catch (ParseException ex) {
-            Logger.getLogger(NovaConsultaForm.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Alteração de Consultas",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 

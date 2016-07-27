@@ -36,6 +36,7 @@ public class PacienteBO {
         this.verificaCpfPaciente(paciente);
         pacinteDAO.criar(paciente);
     }
+
     private void verificaCpfPaciente(Paciente paciente) throws SQLException {
         Paciente cpfPacienteExistente = null;
         PacienteDAO pacienteDAO = new PacienteDAO();
@@ -43,14 +44,26 @@ public class PacienteBO {
         if (cpfPacienteExistente != null) {
             throw new CpfPacienteExisteException();
         }
-        
+
     }
 
-     public void editar(Paciente paciente) throws SQLException, CampoObrigatorioException {
+    public void editar(Paciente paciente) throws SQLException, CampoObrigatorioException {
         PacienteDAO pacienteDAO = new PacienteDAO();
         if (paciente.getNome().isEmpty() || paciente.getEndereco().isEmpty() || paciente.getTelefone().isEmpty() || paciente.getCpf().isEmpty() || paciente.getSexo().isEmpty() || paciente.getData_nascimento().equals("")) {
             throw new CampoObrigatorioException();
         }
+        this.verificaCpfPaciente(paciente);
         pacienteDAO.alterar(paciente);
+    }
+
+    public List<Paciente> buscarTodosNome(String nome) throws SQLException {
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        return pacienteDAO.buscarNomes(nome);
+
+    }
+
+    public void removerPaciente(int id) throws SQLException {
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        pacienteDAO.removerPaciente(id);
     }
 }

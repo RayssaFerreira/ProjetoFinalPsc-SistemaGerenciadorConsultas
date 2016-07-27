@@ -33,6 +33,7 @@ public class UsuarioBO {
         this.verificaUsuarioLogin(usuario);
         usuarioDAO.criar(usuario);
     }
+
     public void verificaUsuarioLogin(Usuario usuario) throws SQLException {
         Usuario usuarioExistente = null;
         UsuarioDAO usuarioDAO = new UsuarioDAO();
@@ -41,11 +42,13 @@ public class UsuarioBO {
             throw new UsuarioExisteException();
         }
     }
+
     public void editar(Usuario usuario) throws SQLException, CampoObrigatorioException {
         UsuarioDAO usuarioDAO = new UsuarioDAO();
         if (usuario.getLogin().isEmpty() || usuario.getSenha().isEmpty() || usuario.getNome().isEmpty() || usuario.getGrupo_Usuario().isEmpty()) {
             throw new CampoObrigatorioException();
         }
+        this.verificaUsuarioLogin(usuario);
         usuarioDAO.alterar(usuario);
     }
 

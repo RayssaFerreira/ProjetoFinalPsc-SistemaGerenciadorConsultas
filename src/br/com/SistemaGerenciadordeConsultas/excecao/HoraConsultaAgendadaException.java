@@ -9,6 +9,9 @@ package br.com.SistemaGerenciadordeConsultas.excecao;
  *
  * @author Rayssa
  */
-public class HoraConsultaAgendadaException {
+public class HoraConsultaAgendadaException extends GerenciadorConsultasException {
+    public HoraConsultaAgendadaException(){
+        super("j marcada");
+    }
     
 }

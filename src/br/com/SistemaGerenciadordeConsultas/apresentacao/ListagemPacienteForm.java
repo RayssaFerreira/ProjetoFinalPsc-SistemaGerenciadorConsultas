@@ -58,6 +58,8 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
         btnNovo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
         btnVoltar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PACIENTES");
@@ -125,6 +127,21 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Agendar Nova Consulta");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/SistemaGerenciadordeConsultas/apresentacao/icones/1469138687_block_user.png"))); // NOI18N
+        jButton2.setText("Excluir");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -139,14 +156,18 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBuscar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLimpar))
+                        .addComponent(btnLimpar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAlterar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 468, Short.MAX_VALUE))
+                .addGap(0, 315, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -154,10 +175,13 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNovo)
                     .addComponent(btnAlterar)
-                    .addComponent(btnVoltar))
+                    .addComponent(btnVoltar)
+                    .addComponent(jButton2))
                 .addGap(66, 66, 66)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnLimpar, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnLimpar)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnBuscar)))
@@ -216,6 +240,79 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
             Logger.getLogger(NovoPacienteForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnAlterarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        try {
+            int linhaSelecionada = tblPaciente.getSelectedRow();
+            if (linhaSelecionada != -1) {
+                Paciente pacienteSelecionado = pacientes.get(linhaSelecionada);
+
+                int resposta;
+                String mensagem = "Deseja Agendar Vonsulta para Paciente? " + pacienteSelecionado.getNome();
+                String titulo = "Agendar Nova Consulta";
+                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+
+                if (resposta == JOptionPane.YES_NO_OPTION) {
+                    NovaConsultaForm consulta = new NovaConsultaForm();
+                    consulta.setVisible(true);
+                }
+            } else {
+                String mensagem = "Nenhum paciente selecionado para Agendar nova Consulta.";
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Agendar Consulta Paciente",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
+            mensagem += "\nMensagem de erro:\n" + e.getMessage();
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Agenda Consulta Paciente ",
+                    JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        excluirPaciente();
+    }//GEN-LAST:event_jButton2ActionPerformed
+    private void excluirPaciente(){
+        try {
+            int linhaSelecionada = tblPaciente.getSelectedRow();
+            if (linhaSelecionada != -1) {
+                Paciente pacienteSelecionado = pacientes.get(linhaSelecionada);
+
+                int resposta;
+                String mensagem = "Deseja excluir Paaciente : " + pacienteSelecionado.getNome()+ "?";
+                String titulo = "Exclusão de Paciente";
+                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+
+                if (resposta == JOptionPane.YES_NO_OPTION) {
+                    PacienteBO pacienteBO = new PacienteBO();
+                    pacienteBO.removerPaciente(pacienteSelecionado.getId());
+                    JOptionPane.showMessageDialog(this,
+                            "Paciente Excluido com sucesso!", 
+                            "Exclusão de Paciente", JOptionPane.INFORMATION_MESSAGE);
+                    this.carregarTabelaPaciente();
+                }
+
+            } else {
+                String mensagem = "Nenhum Paciente selecionado para Excluir.";
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Exclusão de Paciente",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
+            mensagem += "\nMensagem de erro:\n" + e.getMessage();
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Exclusão de Paciente ",
+                    JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+
+        }
+    }
     private void editarPaciente() throws SQLException {
          try {
             int linhaSelecionada = tblPaciente.getSelectedRow();
@@ -225,7 +322,8 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
                 int resposta;
                 String mensagem = "Deseja alterar Paciente? " + pacienteSelecionado.getNome();
                 String titulo = "Alteração de Usuário";
-                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+                resposta = JOptionPane.showConfirmDialog(this,
+                        mensagem, titulo, JOptionPane.YES_NO_OPTION);
 
                 if (resposta == JOptionPane.YES_NO_OPTION) {
                     NovoPacienteForm cadastroPaciente = new NovoPacienteForm(pacienteSelecionado,this);
@@ -233,12 +331,16 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
                 }
             } else {
                 String mensagem = "Nenhum paciente selecionado para Alterar.";
-                JOptionPane.showMessageDialog(this, mensagem, "Alteração de Paciente", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Alteração de Paciente",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
             mensagem += "\nMensagem de erro:\n" + e.getMessage();
-            JOptionPane.showMessageDialog(this, mensagem, "Alteração de Paciente ", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Alteração de Paciente ",
+                    JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
 
@@ -250,6 +352,8 @@ public class ListagemPacienteForm extends javax.swing.JFrame {
     private javax.swing.JButton btnLimpar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnVoltar;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblPaciente;

@@ -9,23 +9,9 @@ package br.com.SistemaGerenciadordeConsultas.excecao;
  *
  * @author Rayssa
  */
-public class CampoObrigatorioException extends Exception {
+public class CampoObrigatorioException extends GerenciadorConsultasException {
 
-    /**
-     * Creates a new instance of <code>CampoObrigatorioException</code> without
-     * detail message.
-     */
-    public CampoObrigatorioException() {
-        super("Favor informar o(s) campo(s) obrigatório(s).");
-    }
-
-    /**
-     * Constructs an instance of <code>CampoObrigatorioException</code> with the
-     * specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    public CampoObrigatorioException(String msg) {
-        super(msg);
-    }
+   public CampoObrigatorioException(){
+       super("Preencha Todos os Campos para realizar Cadastro!");
+   }
 }

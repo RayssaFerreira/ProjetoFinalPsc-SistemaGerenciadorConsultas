@@ -11,7 +11,9 @@ import br.com.SistemaGerenciadordeConsultas.excecao.CampoObrigatorioException;
 import br.com.SistemaGerenciadordeConsultas.excecao.GerenciadorConsultasException;
 import br.com.SistemaGerenciadordeConsultas.negocio.ConsultaBO;
 import br.com.SistemaGerenciadordeConsultas.negocio.ConverteData;
+import br.com.SistemaGerenciadordeConsultas.negocio.PacienteBO;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +32,7 @@ public class ListagemConsultasForm extends javax.swing.JFrame {
     private List<Consulta> consultas;
     NovaConsultaForm novaConsulta;
     private Consulta filtro;
+    PacienteBO pacienteBO = new PacienteBO();
 
     public ListagemConsultasForm() {
         initComponents();
@@ -219,9 +222,15 @@ public class ListagemConsultasForm extends javax.swing.JFrame {
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
         //this.buscarConsulta();
+        List< Paciente> pacientes = new ArrayList<>();
+        try {
+            pacientes = pacienteBO.buscarTodosNome(txtNome.getText().trim());
+            carregarTabela();
+        } catch (Exception e) {
+        }
+
     }//GEN-LAST:event_btnBuscarActionPerformed
-   
-   
+
     private void editarConsulta() {
         try {
             int linhaSelecionada = tblConsulta.getSelectedRow();
@@ -239,12 +248,16 @@ public class ListagemConsultasForm extends javax.swing.JFrame {
                 }
             } else {
                 String mensagem = "Nenhum paciente selecionado para Alterar.";
-                JOptionPane.showMessageDialog(this, mensagem, "Alteração de Consulta", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Alteração de Consulta",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
             mensagem += "\nMensagem de erro:\n" + e.getMessage();
-            JOptionPane.showMessageDialog(this, mensagem, "Alteração de Consulta ", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Alteração de Consulta ",
+                    JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
 
@@ -300,17 +313,6 @@ public class ListagemConsultasForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 
-    private void carregarTabela() {
-        ConsultaBO consultaBO = new ConsultaBO();
-        try {
-            this.consultas = consultaBO.buscarTodos();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        Model model = new Model();
-        this.tblConsulta.setModel(model);
-    }
-
     private void excluirConsulta() throws SQLException {
 
         try {
@@ -321,26 +323,44 @@ public class ListagemConsultasForm extends javax.swing.JFrame {
                 int resposta;
                 String mensagem = "Deseja excluir consulta marcada para : " + consultaSelecionado.getPaciente() + "?";
                 String titulo = "Exclusão de Consulta";
-                resposta = JOptionPane.showConfirmDialog(this, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+                resposta = JOptionPane.showConfirmDialog(this,
+                        mensagem, titulo, JOptionPane.YES_NO_OPTION);
 
                 if (resposta == JOptionPane.YES_NO_OPTION) {
                     ConsultaBO consultaBO = new ConsultaBO();
                     consultaBO.removerConsulta(consultaSelecionado.getId());
-                    JOptionPane.showMessageDialog(this, "Consulta Excluida com sucesso!", "Exclusão de Consulta", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                            "Consulta Excluida com sucesso!",
+                            "Exclusão de Consulta", JOptionPane.INFORMATION_MESSAGE);
                     this.carregarTabela();
                 }
 
             } else {
-                String mensagem = "Nenhuma consulta selecionada.";
-                JOptionPane.showMessageDialog(this, mensagem, "Exclusão de consulta", JOptionPane.ERROR_MESSAGE);
+                String mensagem = "Nenhuma consulta selecionada para Excluir.";
+                JOptionPane.showMessageDialog(this,
+                        mensagem, "Exclusão de consulta",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             String mensagem = "Erro inesperado! Informe a mensagem de erro ao administrador do sistema.";
             mensagem += "\nMensagem de erro:\n" + e.getMessage();
-            JOptionPane.showMessageDialog(this, mensagem, "Exclusão de Consulta ", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    mensagem, "Exclusão de Consulta ",
+                    JOptionPane.ERROR_MESSAGE);
             this.dispose();
 
         }
+    }
+
+    private void carregarTabela() {
+        ConsultaBO consultaBO = new ConsultaBO();
+        try {
+            this.consultas = consultaBO.buscarTodos();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Model model = new Model();
+        this.tblConsulta.setModel(model);
     }
 
     private class Model extends AbstractTableModel {
