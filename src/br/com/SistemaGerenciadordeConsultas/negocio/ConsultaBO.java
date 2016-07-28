@@ -96,5 +96,10 @@ public class ConsultaBO {
         
     }
     
+    public List<Consulta> buscarPorDatas(java.sql.Date dataInicial, java.sql.Date dataFinal) throws SQLException {
+        ConsultaDAO consultaDAO = new ConsultaDAO();
+        return consultaDAO.buscarPorDatas(dataInicial, dataFinal);
+    }
+    
     
 }

@@ -20,6 +20,34 @@ public class Consulta {
     private Medico medico;
     private Paciente paciente;
     private String observacao;
+    
+    private String strMedico;
+    private String strPaciente;
+
+    public String getStrData() {
+        return strData;
+    }
+
+    public void setStrData(String strData) {
+        this.strData = strData;
+    }
+    
+    private String strData;
+    public String getStrMedico() {
+        return strMedico;
+    }
+
+    public void setStrMedico(String strMedico) {
+        this.strMedico = strMedico;
+    }
+
+    public String getStrPaciente() {
+        return strPaciente;
+    }
+
+    public void setStrPaciente(String strPaciente) {
+        this.strPaciente = strPaciente;
+    }
 
     public int getId() {
         return id;
